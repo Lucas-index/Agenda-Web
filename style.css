@@ -1,0 +1,264 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  /* Tela de login */
+  .login-body {
+    height: 100vh;
+    background: linear-gradient(120deg, #4b6cb7, #182848);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .login-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    width: 320px;
+    text-align: center;
+  }
+  
+  .login-container h2 {
+    margin-bottom: 1.5rem;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+  }
+  
+  .login-container button {
+    width: 100%;
+    padding: 0.75rem;
+    background: #4b6cb7;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .login-container button:hover {
+    background: #3a53a4;
+  }
+  
+  .error-msg {
+    color: red;
+    margin-top: 0.5rem;
+  }
+  
+  /* Calendário */
+  .calendar-body {
+    padding: 2rem;
+    background: #f4f7fc;
+    min-height: 100vh;
+  }
+  
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  
+  .calendar-header button {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #4b6cb7;
+  }
+  
+  .month-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 colunas fixas */
+    gap: 10px;
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    justify-content: center;
+  }
+  
+  .day {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.8rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .day:hover {
+    background: #e2eaff;
+    transform: scale(1.05);
+  }
+  
+  .day.full {
+    background: #ffcccc;
+    color: #888;
+    /* Removido: pointer-events: none; */
+    cursor: pointer;
+  }
+  
+  .day.reserved {
+    background: #d0e6ff;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Modal para reservas */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 300px;
+  }
+  
+  .modal h3 {
+    margin-bottom: 1rem;
+  }
+  
+  .modal input,
+  .modal textarea {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+  }
+  
+  .modal button {
+    padding: 0.75rem;
+    width: 100%;
+    background: #4b6cb7;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+  }
+  
+  .modal.show {
+    display: flex;
+  }
+
+  .horario-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    background: #eef3ff;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.5rem;
+  }
+  
+  .horario-item span {
+    font-weight: 500;
+  }
+  
+  .horario-item button {
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    color: #444;
+    max-width: 700px;
+    margin: 0 auto;
+    padding-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    color: #444;
+    max-width: 700px;
+    margin: 0 auto;
+    padding-top: 10px;
+    letter-spacing: 1px;
+  }
+  
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    text-align: center;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px; right: 15px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #888;
+  }
+  
+  .time-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  
+  

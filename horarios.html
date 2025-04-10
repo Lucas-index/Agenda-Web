@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Horários do Dia</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f8f8f8;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .horario-item {
+      display: flex;
+      justify-content: space-between;
+      background: #eee;
+      padding: 8px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+    .horario-item button {
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="titulo"></h2>
+    <div id="listaHorarios"></div>
+
+    <h3>Escolha um horário para reservar</h3>
+    <div id="botoesHorarios"></div>
+    
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZYPXJAj7rps0HSW-feSdsfN5nBxdWNJs",
+      authDomain: "calculadora-lucas.firebaseapp.com",
+      databaseURL: "https://calculadora-lucas-default-rtdb.firebaseio.com",
+      projectId: "calculadora-lucas",
+      storageBucket: "calculadora-lucas.appspot.com",
+      messagingSenderId: "129654163462",
+      appId: "1:129654163462:web:1b6ab422a2db45a1c49b87"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
+    const horariosFixos = ["07:00", "07:50", "08:40", "09:00", "09:30", "09:50", "10:40", "11:30"];
+    const data = localStorage.getItem('dataSelecionada');
+    const user = localStorage.getItem('userLogado') || 'visitante';
+    const lista = document.getElementById('listaHorarios');
+    const titulo = document.getElementById('titulo');
+    const botoesHorarios = document.getElementById('botoesHorarios');
+    
+    async function carregarReservas() {
+      const snapshot = await get(ref(db, 'reservas/' + data));
+      return snapshot.exists() ? snapshot.val() : [];
+    }
+    
+    async function salvarReservaFirebase(horario) {
+      const reservas = await carregarReservas();
+      reservas.push({ hora: horario, professor: user });
+      await set(ref(db, 'reservas/' + data), reservas);
+      renderHorarios();
+    }
+    
+    async function removerReservaFirebase(index) {
+      const reservas = await carregarReservas();
+      reservas.splice(index, 1);
+      await set(ref(db, 'reservas/' + data), reservas);
+      renderHorarios();
+    }
+    
+    async function renderHorarios() {
+      const reservas = await carregarReservas();
+      lista.innerHTML = '';
+      botoesHorarios.innerHTML = '';
+      titulo.textContent = `Horários do dia ${data}`;
+    
+      if (reservas.length === 0) {
+        lista.innerHTML = '<p>Sem horários reservados.</p>';
+      } else {
+        reservas.forEach((r, i) => {
+          const div = document.createElement('div');
+          div.className = 'horario-item';
+          div.innerHTML = `
+            <span>${r.hora} - ${r.professor}</span>
+            ${r.professor === user ? `<button onclick="removerReservaFirebase(${i})">&times;</button>` : ''}
+          `;
+          lista.appendChild(div);
+        });
+      }
+    
+      horariosFixos.forEach(horario => {
+        const reservado = reservas.find(r => r.hora === horario);
+        const btn = document.createElement('button');
+        btn.textContent = horario;
+        btn.disabled = !!reservado;
+        btn.style.margin = '5px';
+        btn.style.backgroundColor = reservado ? '#ccc' : '#007bff';
+        btn.style.color = reservado ? '#666' : '#fff';
+        btn.style.cursor = reservado ? 'not-allowed' : 'pointer';
+    
+        if (!reservado) {
+          btn.addEventListener('click', () => salvarReservaFirebase(horario));
+        }
+    
+        botoesHorarios.appendChild(btn);
+      });
+    }
+    
+    renderHorarios();
+    
+    window.removerReservaFirebase = removerReservaFirebase;
+    </script>    
+    
+</body>
+</html>

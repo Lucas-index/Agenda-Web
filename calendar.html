@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendário - Reserva de Laboratório</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="calendar-body">
+
+  <div class="calendar-header">
+    <button id="prevMonth">&larr;</button>
+    <div class="month-name" id="monthName">Abril 2025</div>
+    <button id="nextMonth">&rarr;</button>
+  </div>
+
+  <div class="weekdays">
+    <div>D</div>
+    <div>S</div>
+    <div>T</div>
+    <div>Q</div>
+    <div>Q</div>
+    <div>S</div>
+    <div>S</div>
+  </div>
+  
+  <div class="calendar-grid" id="calendarGrid"></div>
+  <div id="horariosDia" class="modal-overlay">
+    <div class="modal">
+      <h3>Horários do dia</h3>
+      <div id="listaHorarios"></div>
+      <button onclick="abrirModalReserva()">Nova reserva</button>
+    </div>
+  </div>
+  
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h3>Reservar horário</h3>
+      <input type="text" id="reservaHora" placeholder="Ex: 12:00" required />
+      <textarea id="reservaMotivo" placeholder="Motivo da reserva" required></textarea>
+      <button id="confirmReserva">Confirmar</button>
+    </div>
+  </div>
+
+  <div id="scheduleModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h3 id="modalDate">Horários para:</h3>
+      <div id="timeSlots" class="time-slots"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyAZYPXJAj7rps0HSW-feSdsfN5nBxdWNJs",
+      authDomain: "calculadora-lucas.firebaseapp.com",
+      databaseURL: "https://calculadora-lucas-default-rtdb.firebaseio.com",
+      projectId: "calculadora-lucas",
+      storageBucket: "calculadora-lucas.appspot.com",
+      messagingSenderId: "129654163462",
+      appId: "1:129654163462:web:1b6ab422a2db45a1c49b87"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+  
+    const monthNameEl = document.getElementById('monthName');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const prevMonth = document.getElementById('prevMonth');
+    const nextMonth = document.getElementById('nextMonth');
+  
+    let currentDate = new Date();
+  
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+  
+    async function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+      const snapshot = await get(ref(db, 'reservas'));
+      const reservas = snapshot.exists() ? snapshot.val() : {};
+  
+      calendarGrid.innerHTML = '';
+      const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      monthNameEl.textContent = `${monthNames[month]} ${year}`;
+  
+      for (let i = 0; i < firstDay; i++) {
+        calendarGrid.innerHTML += `<div></div>`;
+      }
+  
+      for (let i = 1; i <= daysInMonth; i++) {
+        const fullDate = formatDate(new Date(year, month, i));
+        const dayData = reservas[fullDate] || [];
+        const full = dayData.length >= 8;
+  
+        let className = 'day';
+        if (full) className += ' full';
+        else if (dayData.length > 0) className += ' reserved';
+  
+        const div = document.createElement('div');
+        div.className = className;
+        div.textContent = i;
+  
+        div.addEventListener('click', () => {
+          localStorage.setItem('dataSelecionada', fullDate);
+          window.location.href = 'horarios.html';
+        });
+  
+        calendarGrid.appendChild(div);
+      }
+    }
+  
+    if (calendarGrid) {
+      renderCalendar();
+      prevMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+      });
+  
+      nextMonth.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+      });
+    }
+  </script>  
+  <script src="script.js"></script>
+</body>
+</html>
