@@ -59,7 +59,7 @@
   /* Calendário */
   .calendar-body {
     padding: 2rem;
-    background: #f4f7fc;
+    background: linear-gradient(120deg, #f9f9f9, #b8c6ff);
     min-height: 100vh;
   }
   
@@ -99,7 +99,7 @@
     padding: 1rem;
     border-radius: 0.8rem;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.26);
     font-weight: bold;
     cursor: pointer;
     transition: transform 0.2s;
